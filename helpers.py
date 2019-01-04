@@ -60,8 +60,8 @@ class Settings:
         self.yes_pic_shortcut = settings["Keyboard Shotcuts"]["I like the picture"]
         self.no_pic_shortcut = settings["Keyboard Shotcuts"]["I don't like the picture"]
 
-        self.yes_overall_shortcut = settings["Keyboard Shotcuts"]["I like the profile"]
-        self.no_overall_shortcut = settings["Keyboard Shotcuts"]["I don't like the profile"]
+        self.yes_profile_shortcut = settings["Keyboard Shotcuts"]["I like the profile"]
+        self.no_profile_shortcut = settings["Keyboard Shotcuts"]["I don't like the profile"]
 
         self.select_tinder_provider = settings["Keyboard Shotcuts"]["Select tinder provider"]
         self.select_badoo_provider = settings["Keyboard Shotcuts"]["Select badoo provider"]

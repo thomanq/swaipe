@@ -77,21 +77,35 @@ class TinderProvider(DatingProvider):
     def __init__(self):
         super().__init__(name = "tinder") 
         self.url = "https://tinder.com/app/recs"
+        self.is_current_pic_escaped = True
 
     def get_central_pic(self):
 
         if not self.central_pic_region:
 
             pyautogui.press('esc')
-            time.sleep(1)
+            time.sleep(0.5)
             self.central_pic_region = cv2_detect_main_pic()
             if self.central_pic_region: # crop tinder pics
                 self.central_pic_region.width -= 15
                 self.central_pic_region.height -= 60
             pyautogui.press('space')
+            self.is_current_pic_escaped = False
             time.sleep(1)
 
         if not self.central_pic_region:
             return None
         else: 
             return pyautogui.screenshot(region=self.central_pic_region.as_tuple())
+
+    def get_next_pic(self):
+        pyautogui.press('space')
+
+        if self.is_current_pic_escaped:
+             time.sleep(0.5)
+             pyautogui.press('space')
+             self.is_current_pic_escaped = False
+
+    def handle_yes_no_profile(self, rating: bool):
+        super().handle_yes_no_profile(rating)
+        self.is_current_pic_escaped = True

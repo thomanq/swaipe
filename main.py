@@ -29,11 +29,11 @@ def on_key_release(key, session: Session):
                 # I don't like the picture
                 session.provider.handle_yes_no_image(False)
 
-        elif is_setting_shortcut(key, modifier, settings.yes_overall_shortcut):
+        elif is_setting_shortcut(key, modifier, settings.yes_profile_shortcut):
                 # I like the profile
                 session.provider.handle_yes_no_profile(True)
 
-        elif is_setting_shortcut(key, modifier, settings.no_overall_shortcut):
+        elif is_setting_shortcut(key, modifier, settings.no_profile_shortcut):
                 # I don't like the profile
                 session.provider.handle_yes_no_profile(False)
 

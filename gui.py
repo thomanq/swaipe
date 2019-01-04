@@ -22,9 +22,9 @@ class GUI(object):
         picture_label = tk.Label(self.frame, text=picture_label_text)
         picture_label.grid(row=3, column=0, padx=5, pady=5, ipadx=10, sticky=tk.W)
 
-        overall_label_text = f"Overall: [No: '{settings.no_overall_shortcut}'] [Yes: '{settings.yes_overall_shortcut}'] "
-        overall_label = tk.Label(self.frame, text=overall_label_text)
-        overall_label.grid(row=4, column=0, padx=5, pady=5, ipadx=10, sticky=tk.W)
+        profile_label_text = f"Profile: [No: '{settings.no_profile_shortcut}'] [Yes: '{settings.yes_profile_shortcut}'] "
+        profile_label = tk.Label(self.frame, text=profile_label_text)
+        profile_label.grid(row=4, column=0, padx=5, pady=5, ipadx=10, sticky=tk.W)
 
         root.wm_attributes("-topmost", 1)
     
