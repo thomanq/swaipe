@@ -1,6 +1,7 @@
 import time
 import datetime
 import threading
+import random
 
 def only_if_not_running(func):
     def func_wrapper(self):
@@ -36,7 +37,8 @@ def repeat(func):
             delta = datetime.datetime.now() - now
             delta_seconds = delta.seconds + delta.microseconds / 1_000_000
             if delta_seconds < self.min_choice_interval:
-                time.sleep(self.min_choice_interval - delta_seconds)
+                seconds_until_min = self.min_choice_interval - delta_seconds
+                time.sleep(seconds_until_min + random.uniform(0, self.max_choice_interval - self.min_choice_interval))
 
         else:
             self.stop()
@@ -44,13 +46,15 @@ def repeat(func):
     return func_wrapper
 
 class Automator(object):
-    def __init__(self, name = "base_automator", provider=None, max_choice_limit: int = 0, min_choice_interval: float=3.0, yes_rate_goal: float = 0.0):
+    def __init__(self, name = "base_automator", provider=None, max_choice_limit: int = 0, min_choice_interval: float=2.5, 
+         max_choice_interval: float=4.5, yes_rate_goal: float = 0.0):
         self.name = name
         self.is_running = False
         self.provider = provider
         self.max_choice_limit = max_choice_limit
         self.num_choices = 0
         self.min_choice_interval = min_choice_interval
+        self.max_choice_interval = max_choice_interval
         self.num_yesses = 0
         self.yes_rate = 0
         self.yes_rate_goal = yes_rate_goal
@@ -94,8 +98,8 @@ class Automator(object):
             self.provider = provider
 
 class RandomAutomator(Automator):
-    def __init__(self, name = "Random Automator", max_choice_limit = 0, min_choice_interval: float=3.0, yes_rate_goal: float = 0.65):
-        super().__init__(name=name, max_choice_limit=max_choice_limit, min_choice_interval=min_choice_interval, yes_rate_goal=yes_rate_goal)
+    def __init__(self, name = "Random Automator", max_choice_limit = 0, min_choice_interval: float=1.9, max_choice_interval: float=5.1, yes_rate_goal: float = 0.65):
+        super().__init__(name=name, max_choice_limit=max_choice_limit, min_choice_interval=min_choice_interval,max_choice_interval=max_choice_interval, yes_rate_goal=yes_rate_goal)
     
     @repeat
     def choose(self):
