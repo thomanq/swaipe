@@ -1,6 +1,6 @@
 import time
+import datetime
 import threading
-
 
 def only_if_not_running(func):
     def func_wrapper(self):
@@ -16,14 +16,44 @@ def only_if_running(func):
             return func(self)
     return func_wrapper
 
+def repeat(func):
+    '''
+        Repeats function until max_choice_limit has been reached then stops.
+        If max_choice_limit == 0, repeats indefinitely.
+
+        Throttles repeat rate (max 1 call every min_choice_interval seconds).
+
+    '''
+
+    def func_wrapper(self):          
+        while self.is_running and (self.max_choice_limit == 0 or self.num_choices < self.max_choice_limit):
+            now = datetime.datetime.now()
+            
+            func(self)
+            self.num_choices +=1
+            self.update_yes_rate()
+
+            delta = datetime.datetime.now() - now
+            delta_seconds = delta.seconds + delta.microseconds / 1_000_000
+            if delta_seconds < self.min_choice_interval:
+                time.sleep(self.min_choice_interval - delta_seconds)
+
+        else:
+            self.stop()
+            return
+    return func_wrapper
+
 class Automator(object):
-    def __init__(self, name = "base_automator", provider=None, gui=None, max_choice_limit: int = 0):
+    def __init__(self, name = "base_automator", provider=None, max_choice_limit: int = 0, min_choice_interval: float=3.0, yes_rate_goal: float = 0.0):
         self.name = name
         self.is_running = False
         self.provider = provider
-        self.gui = gui
         self.max_choice_limit = max_choice_limit
         self.num_choices = 0
+        self.min_choice_interval = min_choice_interval
+        self.num_yesses = 0
+        self.yes_rate = 0
+        self.yes_rate_goal = yes_rate_goal
     
     @only_if_not_running
     def start(self):
@@ -35,10 +65,9 @@ class Automator(object):
     def stop(self):
          pass
 
+    @repeat
     def choose(self):
-        while self.is_running:
-            print("automator deamon running")
-            time.sleep(1)
+        print("automator deamon running")
 
     def toggle_start_stop(self):
         if not self.is_running:
@@ -50,28 +79,30 @@ class Automator(object):
         self.max_choice_limit  += increment
         if self.max_choice_limit < 0: 
             self.max_choice_limit = 0 
+    
+    def update_yes_rate(self):
+        self.yes_rate = self.num_yesses / self.num_choices if self.num_choices != 0 else 0
 
-        if self.gui:
-                self.gui.update_selected_automator_text(self)
+    def update_yes_rate_goal(self, increment):
+        self.yes_rate_goal += increment
 
+    def set_provider(self, provider):
+        if provider != self.provider:
+            self.num_choices = 0
+            self.num_yesses = 0
+            self.yes_rate = 0
+            self.provider = provider
 
 class RandomAutomator(Automator):
-    def __init__(self, name = "Random Automator"):
-        super().__init__(name = name)
-        self.max_choice_limit = 6
+    def __init__(self, name = "Random Automator", max_choice_limit = 0, min_choice_interval: float=3.0, yes_rate_goal: float = 0.65):
+        super().__init__(name=name, max_choice_limit=max_choice_limit, min_choice_interval=min_choice_interval, yes_rate_goal=yes_rate_goal)
     
+    @repeat
     def choose(self):
-        while self.is_running and self.max_choice_limit == 0 or self.num_choices < self.max_choice_limit:
-            print("deamon running")
-            time.sleep(1)
-            self.num_choices +=1
-
-            if self.gui:
-                self.gui.update_selected_automator_text(self)
-        else:
-            self.stop()
-            if self.gui:
-                self.gui.update_selected_automator_text(self)
-
-
-
+        if self.provider:
+            if self.yes_rate <= self.yes_rate_goal:
+                self.provider.handle_yes_no_profile(True)
+                self.num_yesses += 1
+            else:
+                self.provider.handle_yes_no_profile(False)
+                

@@ -4,8 +4,10 @@ class GUI(object):
     def __init__(self,root, settings):
 
         root.title('Swaipe')
+        root.geometry("430x230")
         self.frame = tk.Frame(root)
-        self.frame.pack()
+        self.frame.pack_propagate(0)
+        self.frame.pack(fill=tk.BOTH, expand=1) 
 
         self.provider_label = tk.Label(self.frame, text="Selected:")
         self.provider_label.grid(row=0, column=0, padx=5, pady=5, ipadx=10, sticky=tk.W)
@@ -42,7 +44,9 @@ class GUI(object):
 
     def update_selected_automator_text(self, automator):
         self.current_automator_label.destroy()
+        automator_name =  f"{automator.name} ({int(automator.yes_rate_goal*100)}%)" if automator.yes_rate_goal !=0 else automator.name
         status_text = "Started" if automator.is_running else "Stopped"
         max_text = "∞" if automator.max_choice_limit == 0 else str(automator.max_choice_limit)
-        self.current_automator_label = tk.Label(self.frame, text=f"Selected: {automator.name} ({status_text}) ({automator.num_choices}/{max_text})")
+        yes_rate = f"(currently: {round(automator.yes_rate * 100, 1)}%)" if automator.yes_rate != 0 else ""
+        self.current_automator_label = tk.Label(self.frame, text=f"Selected: {automator_name} ({status_text}) ({automator.num_choices}/{max_text}) {yes_rate}")
         self.current_automator_label.grid(row=6, column=0, padx=5, pady=5, ipadx=10, sticky=tk.W)

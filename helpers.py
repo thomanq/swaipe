@@ -1,4 +1,6 @@
 import datetime
+import time
+import threading
 import os
 import configparser
 
@@ -78,6 +80,9 @@ class Settings:
         self.automator_max_choice_limit_subtract_1 = settings["Keyboard Shotcuts"]["Automator -1 to max limit"]
         self.automator_max_choice_limit_subtract_10 = settings["Keyboard Shotcuts"]["Automator -10 to max limit"]
 
+        self.automator_yes_rate_add_1_percent = settings["Keyboard Shotcuts"]["Automator +1% to yes percentage"]
+        self.automator_yes_rate_subtract_1_percent = settings["Keyboard Shotcuts"]["Automator -1% to yes percentage"]        
+
 class Session:
     def __init__(self, gui=None, provider=None, automators=[None]):
         self.current_key_modifier = None
@@ -88,9 +93,8 @@ class Session:
         self.automators = automators if len(automators) > 0 else [None]
         self.automator = self.automators[0]
         if self.automator:
-            self.automator.provider = self.provider
-            self.automator.gui = self.gui
-            self.gui.update_selected_automator_text(self.automator)
+            self.automator.set_provider(self.provider)
+            self.gui_update_selected_automator_text()
         self.automator_index = 0
 
     def next_automator(self):
@@ -107,15 +111,55 @@ class Session:
                 self.automator_index = new_automator_index
                 self.automator.stop()
                 self.automator = self.automators[self.automator_index]
-                self.automator.provider = self.provider
-                self.gui.update_selected_automator_text(self.automator)
+                self.automator.set_provider(self.provider)
+                self.gui_update_selected_automator_text()
 
     def change_provider(self, provider):
         self.automator.stop()
         self.provider = provider
-        self.automator.provider = self.provider
+        self.automator.set_provider(self.provider)
         self.gui.update_selected_provider_text(self.provider.name)
-        self.gui.update_selected_automator_text(self.automator)
+        self.gui_update_selected_automator_text()
+
+    def gui_update_selected_automator_text(self):
+
+            # stops the currently running check_ui_update_thread daemon
+            self.ui_update_running = False
+            time.sleep(0.5)
+
+            check_ui_update_thread = threading.Thread(target=self.check_automator_update_ui)
+            check_ui_update_thread.daemon = True
+            check_ui_update_thread.start()
+
+    def check_automator_update_ui(self):
+        '''
+            Deamon checks whether the Automator properties have changed.
+            If so, it updates the UI
+        '''
+
+        first_run = True
+        self.ui_update_running = True
+
+        while True:
+            if first_run or \
+               automator_max_choices != self.automator.max_choice_limit or \
+               automator_num_choices != self.automator.num_choices or \
+               automator_is_running != self.automator.is_running or \
+               automator_yes_rate_goal != self.automator.yes_rate_goal:
+
+                self.gui.update_selected_automator_text(self.automator)
+
+                automator_max_choices = self.automator.max_choice_limit
+                automator_num_choices = self.automator.num_choices
+                automator_is_running = self.automator.is_running
+                automator_yes_rate_goal = self.automator.yes_rate_goal
+
+                first_run = False
+
+            if not self.ui_update_running:
+                break
+
+            time.sleep(0.1)
 
 class Region:
     def __init__(self, left, top, width, height):

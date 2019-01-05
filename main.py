@@ -71,7 +71,7 @@ def on_key_release(key, session: Session):
             # Choose previous available automator
             session.previous_automator()
 
-        # Update de max number choice limit for the automator
+        # Update automator parameters : max_choice_limit and yes_rate_goal
         elif is_setting_shortcut(key, modifier, settings.automator_max_choice_limit_add_1):
             session.automator.update_max_choice_limit(1)
         elif is_setting_shortcut(key, modifier, settings.automator_max_choice_limit_add_10):
@@ -80,6 +80,10 @@ def on_key_release(key, session: Session):
             session.automator.update_max_choice_limit(-1)
         elif is_setting_shortcut(key, modifier, settings.automator_max_choice_limit_subtract_10):
             session.automator.update_max_choice_limit(-10)
+        elif is_setting_shortcut(key, modifier, settings.automator_yes_rate_add_1_percent):
+            session.automator.update_yes_rate_goal(0.01)
+        elif is_setting_shortcut(key, modifier, settings.automator_yes_rate_subtract_1_percent):
+            session.automator.update_yes_rate_goal(-0.01)
 
 def listen_to_keyboard():
 
@@ -94,7 +98,7 @@ if __name__ == "__main__":
     root = tk.Tk()
     gui = GUI(root, settings)
 
-    session = Session(gui=gui, provider=BadooProvider(), automators=[RandomAutomator(), RandomAutomator("bob"), Automator("b"), Automator("c")])
+    session = Session(gui=gui, provider=BadooProvider(), automators=[RandomAutomator(), RandomAutomator(name="Limited Random Automator", max_choice_limit=50)])
 
     keyboard_hotkeys_thread = threading.Thread(target=listen_to_keyboard)
     keyboard_hotkeys_thread.daemon = True
