@@ -69,11 +69,53 @@ class Settings:
         self.go_to_tinder = settings["Keyboard Shotcuts"]["Go to tinder"]
         self.go_to_badoo = settings["Keyboard Shotcuts"]["Go to badoo"]
 
+        self.start_stop_automator = settings["Keyboard Shotcuts"]["Start / stop automator"]
+        self.choose_next_automator = settings["Keyboard Shotcuts"]["Choose next automator"]
+        self.choose_previous_automator = settings["Keyboard Shotcuts"]["Choose previous automator"]
+
+        self.automator_max_choice_limit_add_1 = settings["Keyboard Shotcuts"]["Automator +1 to max limit"]
+        self.automator_max_choice_limit_add_10 = settings["Keyboard Shotcuts"]["Automator +10 to max limit"]
+        self.automator_max_choice_limit_subtract_1 = settings["Keyboard Shotcuts"]["Automator -1 to max limit"]
+        self.automator_max_choice_limit_subtract_10 = settings["Keyboard Shotcuts"]["Automator -10 to max limit"]
+
 class Session:
-    def __init__(self, gui=None, provider=None):
-        self.provider = provider
-        self.gui = gui
+    def __init__(self, gui=None, provider=None, automators=[None]):
         self.current_key_modifier = None
+        self.gui = gui
+        self.provider = provider
+        if self.provider:
+            self.gui.update_selected_provider_text(self.provider.name)
+        self.automators = automators if len(automators) > 0 else [None]
+        self.automator = self.automators[0]
+        if self.automator:
+            self.automator.provider = self.provider
+            self.automator.gui = self.gui
+            self.gui.update_selected_automator_text(self.automator)
+        self.automator_index = 0
+
+    def next_automator(self):
+        new_automator_index = self.automator_index + 1 if self.automator_index + 1 < len(self.automators) else 0
+        self.choose_automator(new_automator_index)
+
+    def previous_automator(self):
+        new_automator_index = self.automator_index - 1 if self.automator_index - 1 >= 0 else len(self.automators) -1
+        self.choose_automator(new_automator_index)
+
+    def choose_automator(self, new_automator_index: int):
+        if self.automator:
+            if new_automator_index != self.automator_index:
+                self.automator_index = new_automator_index
+                self.automator.stop()
+                self.automator = self.automators[self.automator_index]
+                self.automator.provider = self.provider
+                self.gui.update_selected_automator_text(self.automator)
+
+    def change_provider(self, provider):
+        self.automator.stop()
+        self.provider = provider
+        self.automator.provider = self.provider
+        self.gui.update_selected_provider_text(self.provider.name)
+        self.gui.update_selected_automator_text(self.automator)
 
 class Region:
     def __init__(self, left, top, width, height):

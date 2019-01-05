@@ -57,8 +57,8 @@ class DatingProvider(object):
 
 class BadooProvider(DatingProvider):
 
-    def __init__(self):
-        super().__init__(name = "badoo") 
+    def __init__(self, name = "Badoo"):
+        super().__init__(name = name) 
         self.url = "https://badoo.com/encounters"
 
     def get_central_pic(self):
@@ -74,8 +74,8 @@ class BadooProvider(DatingProvider):
 
 class TinderProvider(DatingProvider):
 
-    def __init__(self):
-        super().__init__(name = "tinder") 
+    def __init__(self, name = "Tinder"):
+        super().__init__(name = name) 
         self.url = "https://tinder.com/app/recs"
         self.is_current_pic_escaped = True
 

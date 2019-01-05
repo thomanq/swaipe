@@ -22,7 +22,7 @@ def sc_base(shortcut):
 
     '''
 
-    if shortcut == "+" or (len(shortcut) > 1 and shortcut[-1] == "+"):
+    if shortcut == "+" or (len(shortcut) > 1 and shortcut[-2:] == "++"):
         return "+"
     elif len(shortcut.split("+")) == 2:
         return shortcut.split("+")[1] 
@@ -36,7 +36,8 @@ def sc_modifier(shortcut: str):
         
     '''
 
-    if len(shortcut.split("+")) == 2:
+    if (len(shortcut.split("+")) == 2 and "" not in shortcut.split("+")) or \
+     (len(shortcut.split("+")) == 3 and shortcut.split("+")[1] == shortcut.split("+")[2] == ""):
         return extend_modifier(shortcut.split("+")[0])
     else: 
         return [None]
