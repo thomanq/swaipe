@@ -20,8 +20,9 @@ class Image(object):
 
 
 class Profile(object):
-    def __init__(self, rating=False, provider_name="provider_unknown"):
+    def __init__(self, rating=False, provider_name="provider_unknown", automator_name="automator_unknown"):
         self.provider_name = provider_name
+        self.automator_name = automator_name
         self.rating = rating
         self.imgs = []
 
@@ -47,11 +48,11 @@ class Profile(object):
 
                 unique_img.img.save(filepath)
                 
-                line = f"image,{filename},{int(unique_img.rating)},{self.provider_name}\n"
+                line = f"image,{filename},{int(unique_img.rating)},{self.provider_name},{self.automator_name}\n"
                 annotations.write(line)
 
             img_ratings = '"({})"'.format(",".join([str(int(unique_img.rating)) for unique_img in umique_imgs]))
-            line = f"profile,{basename},{img_ratings},{int(self.rating)},{self.provider_name}\n"
+            line = f"profile,{basename},{int(self.rating)},{self.provider_name},{self.automator_name},{img_ratings}\n"
             annotations.write(line)
 
 class Settings:

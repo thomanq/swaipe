@@ -61,13 +61,17 @@ class Automator(object):
     
     @only_if_not_running
     def start(self):
+        if self.provider:
+            self.provider.set_automator_name(self.name)
+
         self.running_thread = threading.Thread(target=self.choose)
         self.running_thread.daemon = True
         self.running_thread.start()
 
     @only_if_running
     def stop(self):
-         pass
+        if self.provider:
+            self.provider.set_automator_name("manual")
 
     @repeat
     def choose(self):
@@ -98,7 +102,7 @@ class Automator(object):
             self.provider = provider
 
 class RandomAutomator(Automator):
-    def __init__(self, name = "Random Automator", max_choice_limit = 0, min_choice_interval: float=1.9, max_choice_interval: float=5.1, yes_rate_goal: float = 0.65):
+    def __init__(self, name = "Random Automator", max_choice_limit = 0, min_choice_interval: float=2.5, max_choice_interval: float=5.5, yes_rate_goal: float = 0.65):
         super().__init__(name=name, max_choice_limit=max_choice_limit, min_choice_interval=min_choice_interval,max_choice_interval=max_choice_interval, yes_rate_goal=yes_rate_goal)
     
     @repeat

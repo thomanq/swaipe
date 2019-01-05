@@ -11,7 +11,12 @@ class DatingProvider(object):
         self.central_pic_region = None
         self.url = ""
         self.name = name
-        self.current_profile = Profile(provider_name=self.name)
+        self.automator_name = "manual"
+        self.current_profile = Profile(provider_name=self.name, automator_name=self.automator_name)
+
+    def set_automator_name(self, automator_name):
+        self.automator_name = automator_name
+        self.current_profile.automator_name = automator_name
 
     def handle_yes_no_profile(self, rating: bool):
 
@@ -28,7 +33,7 @@ class DatingProvider(object):
         else:
             self.swipe_left()
 
-        self.current_profile = Profile(provider_name=self.name)
+        self.current_profile = Profile(provider_name=self.name, automator_name=self.automator_name)
 
     def handle_yes_no_image(self, rating: bool):
 
