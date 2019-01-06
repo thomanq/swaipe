@@ -44,11 +44,11 @@ def on_key_release(key, session: Session):
 
         elif is_setting_shortcut(key, modifier, settings.select_badoo_provider):
             # Reset provider to Badoo provider
-            session.change_provider(BadooProvider())
+            session.change_provider(BadooProvider(gui=session.gui))
 
         elif is_setting_shortcut(key, modifier, settings.select_tinder_provider):
             # Reset provider to Tinder provider
-            session.change_provider(TinderProvider())
+            session.change_provider(TinderProvider(gui=session.gui))
 
         elif is_setting_shortcut(key, modifier, settings.go_to_badoo):
             # Go to Badoo website
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     root = tk.Tk()
     gui = GUI(root, settings)
 
-    session = Session(gui=gui, provider=BadooProvider(), automators=[RandomAutomator(), RandomAutomator(name="Limited Random Automator", max_choice_limit=50)])
+    session = Session(gui=gui, provider=BadooProvider(gui=gui), automators=[RandomAutomator(), RandomAutomator(name="Limited Random Automator", max_choice_limit=50)])
 
     keyboard_hotkeys_thread = threading.Thread(target=listen_to_keyboard)
     keyboard_hotkeys_thread.daemon = True

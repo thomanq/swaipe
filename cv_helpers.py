@@ -3,14 +3,12 @@ import os
 
 import cv2
 import numpy as np
-from PIL import ImageGrab
 
 from helpers import Region
 
 OPENCV_DATA_PATH = os.path.join(os.path.dirname(cv2.__file__), "data")
 
-def cv2_detect_main_pic():
-    image = np.asarray(ImageGrab.grab()).copy()
+def cv2_detect_main_pic(image):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     WHITE_BGR = [255,255,255]

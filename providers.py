@@ -1,16 +1,19 @@
 import time
 
 import pyautogui
+import numpy as np
+from PIL import ImageGrab
 
 from helpers import Profile, Image
 from cv_helpers import cv2_detect_main_pic
 
 class DatingProvider(object):
 
-    def __init__(self, name = "base_provider"):
+    def __init__(self, name = "base_provider", gui = None):
         self.central_pic_region = None
         self.url = ""
         self.name = name
+        self.gui = gui
         self.automator_name = "manual"
         self.current_profile = Profile(provider_name=self.name, automator_name=self.automator_name)
 
@@ -59,28 +62,43 @@ class DatingProvider(object):
 
     def get_central_pic(self):
         pass
+    
+    def take_screenshot_of_region(self, region):
+        self.gui.hide()
+        screenshot = pyautogui.screenshot(region=region)
+        self.gui.show()
+
+        return screenshot
+
+    def image_grab(self):
+        self.gui.hide()
+        image = np.asarray(ImageGrab.grab()).copy()
+        self.gui.show()
+
+        return image
 
 class BadooProvider(DatingProvider):
 
-    def __init__(self, name = "Badoo"):
-        super().__init__(name = name) 
+    def __init__(self, name = "Badoo", gui=None):
+        super().__init__(name = name, gui = gui) 
         self.url = "https://badoo.com/encounters"
 
     def get_central_pic(self):
 
         if not self.central_pic_region:
 
-            self.central_pic_region = cv2_detect_main_pic()
+            image_grab = self.image_grab()
+            self.central_pic_region = cv2_detect_main_pic(image_grab)
 
         if not self.central_pic_region:
             return None
         else: 
-            return pyautogui.screenshot(region=self.central_pic_region.as_tuple())
+            return self.take_screenshot_of_region(self.central_pic_region.as_tuple())
 
 class TinderProvider(DatingProvider):
 
-    def __init__(self, name = "Tinder"):
-        super().__init__(name = name) 
+    def __init__(self, name = "Tinder", gui=None):
+        super().__init__(name = name, gui = gui) 
         self.url = "https://tinder.com/app/recs"
         self.is_current_pic_escaped = True
 
@@ -90,7 +108,8 @@ class TinderProvider(DatingProvider):
 
             pyautogui.press('esc')
             time.sleep(0.5)
-            self.central_pic_region = cv2_detect_main_pic()
+            image_grab = self.image_grab()
+            self.central_pic_region = cv2_detect_main_pic(image_grab)
             if self.central_pic_region: # crop tinder pics
                 self.central_pic_region.width -= 15
                 self.central_pic_region.height -= 60
@@ -101,7 +120,7 @@ class TinderProvider(DatingProvider):
         if not self.central_pic_region:
             return None
         else: 
-            return pyautogui.screenshot(region=self.central_pic_region.as_tuple())
+            return self.take_screenshot_of_region(self.central_pic_region.as_tuple())
 
     def get_next_pic(self):
         pyautogui.press('space')

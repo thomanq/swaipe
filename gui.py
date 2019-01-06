@@ -3,9 +3,10 @@ import tkinter as tk
 class GUI(object):
     def __init__(self,root, settings):
 
-        root.title('Swaipe')
-        root.geometry("430x230")
-        self.frame = tk.Frame(root)
+        self.root = root
+        self.root.title('Swaipe')
+        self.root.geometry("430x230")
+        self.frame = tk.Frame(self.root)
         self.frame.pack_propagate(0)
         self.frame.pack(fill=tk.BOTH, expand=1) 
 
@@ -35,7 +36,7 @@ class GUI(object):
         self.current_automator_label = tk.Label(self.frame, text="Selected:")
         self.current_automator_label.grid(row=6, column=0, padx=5, pady=5, ipadx=10, sticky=tk.W)
 
-        root.wm_attributes("-topmost", 1)
+        self.root.wm_attributes("-topmost", 1)
     
     def update_selected_provider_text(self, provider_name):
         self.provider_label.destroy()
@@ -50,3 +51,9 @@ class GUI(object):
         yes_rate = f"(currently: {round(automator.yes_rate * 100, 1)}%)" if automator.yes_rate != 0 else ""
         self.current_automator_label = tk.Label(self.frame, text=f"Selected: {automator_name} ({status_text}) ({automator.num_choices}/{max_text}) {yes_rate}")
         self.current_automator_label.grid(row=6, column=0, padx=5, pady=5, ipadx=10, sticky=tk.W)
+
+    def hide(self):
+        self.root.attributes('-alpha', 0.0)
+        
+    def show(self):
+        self.root.attributes('-alpha', 1.0)
