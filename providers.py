@@ -50,15 +50,22 @@ class DatingProvider(object):
 
     def swipe_right(self):
 
-        pyautogui.press('right')
+        self.press('right')
     
     def swipe_left(self):
 
-        pyautogui.press('left')
+        self.press('left')
 
     def get_next_pic(self):
 
-        pyautogui.press('space')
+        self.press('space')
+
+    def press(self, key: str):
+
+        if self.gui.has_focus():
+            self.gui.set_focus(self.name)
+
+        pyautogui.press(key)
 
     def get_central_pic(self):
         pass
@@ -106,14 +113,14 @@ class TinderProvider(DatingProvider):
 
         if not self.central_pic_region:
 
-            pyautogui.press('esc')
+            self.press('esc')
             time.sleep(0.5)
             image_grab = self.image_grab()
             self.central_pic_region = cv2_detect_main_pic(image_grab)
             if self.central_pic_region: # crop tinder pics
                 self.central_pic_region.width -= 15
                 self.central_pic_region.height -= 60
-            pyautogui.press('space')
+            self.press('space')
             self.is_current_pic_escaped = False
             time.sleep(1)
 
@@ -123,11 +130,11 @@ class TinderProvider(DatingProvider):
             return self.take_screenshot_of_region(self.central_pic_region.as_tuple())
 
     def get_next_pic(self):
-        pyautogui.press('space')
+        self.press('space')
 
         if self.is_current_pic_escaped:
              time.sleep(0.5)
-             pyautogui.press('space')
+             self.press('space')
              self.is_current_pic_escaped = False
 
     def handle_yes_no_profile(self, rating: bool):

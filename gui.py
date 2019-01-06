@@ -1,4 +1,5 @@
 import tkinter as tk
+import pywinauto
 
 class GUI(object):
     def __init__(self,root, settings):
@@ -57,3 +58,15 @@ class GUI(object):
         
     def show(self):
         self.root.attributes('-alpha', 1.0)
+    
+    def has_focus(self):
+        return bool(self.root.focus_get())
+
+    def set_focus(self, provider_name):
+        regex = f"{provider_name}.*"
+
+        windows = pywinauto.findwindows.find_windows(title_re=provider_name)
+        
+        if len(windows) > 0:
+            app = pywinauto.Application().connect(handle=windows[0])
+            app.window(handle=windows[0]).set_focus()
