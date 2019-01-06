@@ -9,11 +9,12 @@ from cv_helpers import cv2_detect_main_pic
 
 class DatingProvider(object):
 
-    def __init__(self, name = "base_provider", gui = None):
+    def __init__(self, name = "base_provider", window_title_regex = "", gui = None):
         self.central_pic_region = None
         self.url = ""
         self.name = name
         self.gui = gui
+        self.window_title_regex = window_title_regex
         self.automator_name = "manual"
         self.current_profile = Profile(provider_name=self.name, automator_name=self.automator_name)
 
@@ -63,7 +64,7 @@ class DatingProvider(object):
     def press(self, key: str):
 
         if self.gui.has_focus():
-            self.gui.set_focus(self.name)
+            self.gui.set_focus(self.window_title_regex)
 
         pyautogui.press(key)
 
@@ -86,8 +87,8 @@ class DatingProvider(object):
 
 class BadooProvider(DatingProvider):
 
-    def __init__(self, name = "Badoo", gui=None):
-        super().__init__(name = name, gui = gui) 
+    def __init__(self, name = "Badoo (arrows)", window_title_regex = "Badoo.*", gui=None):
+        super().__init__(name = name, window_title_regex = window_title_regex, gui = gui) 
         self.url = "https://badoo.com/encounters"
 
     def get_central_pic(self):
@@ -102,10 +103,37 @@ class BadooProvider(DatingProvider):
         else: 
             return self.take_screenshot_of_region(self.central_pic_region.as_tuple())
 
+class BadooProvider123(BadooProvider):
+
+    def __init__(self, name = "Badoo (1, 2, 3)", window_title_regex = "Badoo.*",  gui=None):
+        super().__init__(name = name, window_title_regex = window_title_regex, gui = gui) 
+
+    def swipe_right(self):
+
+        self.press('1')
+    
+    def swipe_left(self):
+
+        self.press('2')
+
+    def get_central_pic(self):
+
+        if not self.central_pic_region:
+
+            image_grab = self.image_grab()
+            self.central_pic_region = cv2_detect_main_pic(image_grab)
+            if self.central_pic_region: # crop pics
+                self.central_pic_region.height -= 105
+
+        if not self.central_pic_region:
+            return None
+        else: 
+            return self.take_screenshot_of_region(self.central_pic_region.as_tuple())
+
 class TinderProvider(DatingProvider):
 
-    def __init__(self, name = "Tinder", gui=None):
-        super().__init__(name = name, gui = gui) 
+    def __init__(self, name = "Tinder", window_title_regex = "Tinder.*", gui=None):
+        super().__init__(name = name, window_title_regex = window_title_regex, gui = gui) 
         self.url = "https://tinder.com/app/recs"
         self.is_current_pic_escaped = True
 

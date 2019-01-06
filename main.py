@@ -5,7 +5,7 @@ from pynput.keyboard import KeyCode, Key, Listener
 
 from gui import GUI
 from keys import *
-from providers import BadooProvider, TinderProvider
+from providers import BadooProvider, BadooProvider123, TinderProvider
 from automators import Automator, RandomAutomator
 from helpers import *
 
@@ -43,8 +43,12 @@ def on_key_release(key, session: Session):
                 session.provider.handle_yes_no_profile(False)
 
         elif is_setting_shortcut(key, modifier, settings.select_badoo_provider):
-            # Reset provider to Badoo provider
-            session.change_provider(BadooProvider(gui=session.gui))
+            # Reset provider to Badoo provider : toggles between available Badoo providers
+            badoo_providers_classes = [BadooProvider123, BadooProvider]
+            for badoo_provider_class in badoo_providers_classes:
+                if badoo_provider_class != session.provider.__class__:
+                    session.change_provider(badoo_provider_class(gui=session.gui))
+                    break
 
         elif is_setting_shortcut(key, modifier, settings.select_tinder_provider):
             # Reset provider to Tinder provider
@@ -98,7 +102,7 @@ if __name__ == "__main__":
     root = tk.Tk()
     gui = GUI(root, settings)
 
-    session = Session(gui=gui, provider=BadooProvider(gui=gui), automators=[RandomAutomator(), RandomAutomator(name="Limited Random Automator", max_choice_limit=50)])
+    session = Session(gui=gui, provider=BadooProvider123(gui=gui), automators=[RandomAutomator(), RandomAutomator(name="Limited Random Automator", max_choice_limit=50)])
 
     keyboard_hotkeys_thread = threading.Thread(target=listen_to_keyboard)
     keyboard_hotkeys_thread.daemon = True

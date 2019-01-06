@@ -1,5 +1,6 @@
 import tkinter as tk
 import pywinauto
+import pyautogui
 
 class GUI(object):
     def __init__(self,root, settings):
@@ -62,11 +63,12 @@ class GUI(object):
     def has_focus(self):
         return bool(self.root.focus_get())
 
-    def set_focus(self, provider_name):
-        regex = f"{provider_name}.*"
+    def set_focus(self, window_title_regex):
 
-        windows = pywinauto.findwindows.find_windows(title_re=provider_name)
+        windows = pywinauto.findwindows.find_windows(title_re=window_title_regex)
         
         if len(windows) > 0:
+            mouse_position = pyautogui.position()
             app = pywinauto.Application().connect(handle=windows[0])
             app.window(handle=windows[0]).set_focus()
+            pyautogui.moveTo(*mouse_position)
