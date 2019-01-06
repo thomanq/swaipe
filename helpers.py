@@ -48,11 +48,11 @@ class Profile(object):
 
                 unique_img.img.save(filepath)
                 
-                line = f"image,{filename},{int(unique_img.rating)},{self.provider_name},{self.automator_name}\n"
+                line = f'image,{filename},{int(unique_img.rating)},"{self.provider_name}","{self.automator_name}"\n'
                 annotations.write(line)
 
             img_ratings = '"({})"'.format(",".join([str(int(unique_img.rating)) for unique_img in unique_imgs]))
-            line = f"profile,{basename},{int(self.rating)},{self.provider_name},{self.automator_name},{img_ratings}\n"
+            line = f'profile,{basename},{int(self.rating)},"{self.provider_name}","{self.automator_name}",{img_ratings}\n'
             annotations.write(line)
 
 class Settings:
