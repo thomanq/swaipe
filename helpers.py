@@ -35,14 +35,14 @@ class Profile(object):
 
         basename = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
 
-        umique_imgs = []
+        unique_imgs = []
         for img in self.imgs:
-            if img not in umique_imgs:
-                umique_imgs.append(img)
+            if img not in unique_imgs:
+                unique_imgs.append(img)
 
         with open(ANNOTATION_FILE_PATH, "a", encoding="utf-8") as annotations:
 
-            for index, unique_img in enumerate(umique_imgs):
+            for index, unique_img in enumerate(unique_imgs):
                 filename = f"{basename}_{index+1}.png"
                 filepath = os.path.join(PROFILE_PICS_DIR, filename)
 
@@ -51,7 +51,7 @@ class Profile(object):
                 line = f"image,{filename},{int(unique_img.rating)},{self.provider_name},{self.automator_name}\n"
                 annotations.write(line)
 
-            img_ratings = '"({})"'.format(",".join([str(int(unique_img.rating)) for unique_img in umique_imgs]))
+            img_ratings = '"({})"'.format(",".join([str(int(unique_img.rating)) for unique_img in unique_imgs]))
             line = f"profile,{basename},{int(self.rating)},{self.provider_name},{self.automator_name},{img_ratings}\n"
             annotations.write(line)
 
