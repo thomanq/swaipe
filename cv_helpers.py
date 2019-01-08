@@ -11,11 +11,18 @@ OPENCV_DATA_PATH = os.path.join(os.path.dirname(cv2.__file__), "data")
 def cv2_detect_main_pic(image):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
+    DARK_COLOR = [150,150,150]
+    LIGHT_COLOR_REPLACEMENT = [200,200,200]
+
+    # make dark colors lighter
+    image[np.where((image < DARK_COLOR ).all(axis = 2))] = LIGHT_COLOR_REPLACEMENT
+
     WHITE_BGR = [255,255,255]
     TINDER_BACKGROUND_BGR_LIGHT = [250,247,245]
     TINDER_BACKGROUND_BGR_DARK = [230,230,230]
     BADOO_BACKGROUND_BGR = [248,248,248]
 
+    # make all background colors black
     for bg_color in [BADOO_BACKGROUND_BGR, WHITE_BGR]:
         image[np.where((image == bg_color).all(axis = 2))] = [0,0,0]
     
@@ -36,16 +43,17 @@ def cv2_detect_main_pic(image):
         approx = cv2.approxPolyDP(c, epsilon, True)
         if len(approx) == 4 and 500_000 > cv2.contourArea(c) > 100_000:
             cv2.drawContours(image, [approx], -1, (0, 255, 0), 4)
-
+            
             # cv2.imshow("Output", image)
             # cv2.waitKey(0)
-            
+
             left = approx[0][0][0]
             top = approx[0][0][1]
             width = approx[2][0][0] - left
             height = approx[2][0][1] - top
 
-            return Region(left, top, width, height)
+            if width > 250 and height > 250:
+                return Region(left, top, width, height)
     
     return None
 

@@ -43,7 +43,7 @@ class Profile(object):
         with open(ANNOTATION_FILE_PATH, "a", encoding="utf-8") as annotations:
 
             for index, unique_img in enumerate(unique_imgs):
-                filename = f"{basename}_{index+1}.png"
+                filename = f"{basename}_{index+1}.jpg"
                 filepath = os.path.join(PROFILE_PICS_DIR, filename)
 
                 unique_img.img.save(filepath)
