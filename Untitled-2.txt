@@ -1,0 +1,8 @@
+from PIL import Image, ExifTags
+
+def show(path):
+	img = Image.open(path)
+	if img._getexif():
+		exif = { ExifTags.TAGS[k]: v for k, v in img._getexif().items() if k in ExifTags.TAGS }
+		if 'XPKeywords' in exif:
+			print(exif['XPKeywords'].decode("utf-16"))
