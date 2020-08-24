@@ -132,7 +132,7 @@ class BadooProvider123(BadooProvider):
 
 class TinderProvider(DatingProvider):
 
-    def __init__(self, name = "Tinder", window_title_regex = "Tinder.*", gui=None):
+    def __init__(self, name = "Tinder", window_title_regex = ".*Tinder.*", gui=None):
         super().__init__(name = name, window_title_regex = window_title_regex, gui = gui) 
         self.url = "https://tinder.com/app/recs"
         self.is_current_pic_escaped = True
