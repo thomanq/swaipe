@@ -35,7 +35,7 @@ def cv2_detect_main_pic(image):
     erode = cv2.erode(dilate,None)
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7))
     closed = cv2.morphologyEx(erode, cv2.MORPH_CLOSE, kernel)
-    _, cnts, _ = cv2.findContours(closed.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    cnts, _ = cv2.findContours(closed.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
  
 
     for c in cnts:
