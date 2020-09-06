@@ -102,7 +102,7 @@ if __name__ == "__main__":
     root = tk.Tk()
     gui = GUI(root, settings)
 
-    session = Session(gui=gui, provider=BadooProvider123(gui=gui), automators=[RandomAutomator(), RandomAutomator(name="Limited Random Automator", max_choice_limit=50)])
+    session = Session(gui=gui, provider=TinderProvider(gui=gui), automators=[RandomAutomator(yes_rate_goal=0.7), RandomAutomator(name="Limited Random Automator", max_choice_limit=50)])
 
     keyboard_hotkeys_thread = threading.Thread(target=listen_to_keyboard)
     keyboard_hotkeys_thread.daemon = True
