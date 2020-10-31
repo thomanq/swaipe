@@ -89,6 +89,12 @@ def on_key_release(key, session: Session):
         elif is_setting_shortcut(key, modifier, settings.automator_yes_rate_subtract_1_percent):
             session.automator.update_yes_rate_goal(-0.01)
 
+        elif is_setting_shortcut(key, modifier, settings.toggle_hide_show_window):
+            if session.gui.is_visible:
+                session.gui.hide()
+            else:
+                session.gui.show()
+
 def listen_to_keyboard():
 
     with Listener(on_press= lambda key: on_key_press(key, session),
@@ -100,6 +106,7 @@ if __name__ == "__main__":
     settings = Settings()
 
     root = tk.Tk()
+    root.wait_visibility()
     gui = GUI(root, settings)
 
     session = Session(gui=gui, provider=TinderProvider(gui=gui), automators=[RandomAutomator(yes_rate_goal=0.7), RandomAutomator(name="Limited Random Automator", max_choice_limit=50)])

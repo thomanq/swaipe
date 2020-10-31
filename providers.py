@@ -80,6 +80,7 @@ class DatingProvider(object):
 
     def image_grab(self):
         self.gui.hide()
+        time.sleep(0.5)
         image = np.asarray(ImageGrab.grab()).copy()
         self.gui.show()
 

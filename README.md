@@ -49,4 +49,4 @@ If you wish to add a platform, extend the `DatingProvider` class in `providers.p
 
 # Supported operating systems
 
-So far, only **Windows 10** has been tested. Any PRs to make this software cross-platform are welcome.
+So far, only **Windows 10** and **Ubuntu Linux** have been tested. Any PRs to support other platforms are welcome.

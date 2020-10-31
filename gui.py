@@ -1,6 +1,16 @@
+import re
+import sys
+import time
 import tkinter as tk
-import pywinauto
+
 import pyautogui
+
+if sys.platform == "win32":
+    import pywinauto
+elif sys.platform == "linux":
+    import gi
+    gi.require_version('Wnck', '3.0')
+    from gi.repository import Wnck
 
 class GUI(object):
     def __init__(self,root, settings):
@@ -39,6 +49,7 @@ class GUI(object):
         self.current_automator_label.grid(row=6, column=0, padx=5, pady=5, ipadx=10, sticky=tk.W)
 
         self.root.wm_attributes("-topmost", 1)
+        self.is_visible = True
     
     def update_selected_provider_text(self, provider_name):
         self.provider_label.destroy()
@@ -56,19 +67,36 @@ class GUI(object):
 
     def hide(self):
         self.root.attributes('-alpha', 0.0)
+        self.is_visible = False
         
     def show(self):
         self.root.attributes('-alpha', 1.0)
+        self.is_visible = True
     
     def has_focus(self):
         return bool(self.root.focus_get())
 
     def set_focus(self, window_title_regex):
 
-        windows = pywinauto.findwindows.find_windows(title_re=window_title_regex)
-        
-        if len(windows) > 0:
-            mouse_position = pyautogui.position()
-            app = pywinauto.Application().connect(handle=windows[0])
-            app.window(handle=windows[0]).set_focus()
-            pyautogui.moveTo(*mouse_position)
+        if sys.platform == "windows":
+            windows = pywinauto.findwindows.find_windows(title_re=window_title_regex)
+
+            if len(windows) > 0:
+                mouse_position = pyautogui.position()
+                app = pywinauto.Application().connect(handle=windows[0])
+                app.window(handle=windows[0]).set_focus()
+                pyautogui.moveTo(*mouse_position)
+
+        elif sys.platform == "linux":
+            screen = Wnck.Screen.get_default()
+            screen.force_update()
+
+            window_list = screen.get_windows()
+
+            for window in window_list:
+                if re.search(window_title_regex, window.get_name()) is not None:
+                    window.activate(int(time.time()+1))
+                    break
+
+        else:
+            raise NotImplementedError(f"Platform '{sys.platform}' is currently not supported.")

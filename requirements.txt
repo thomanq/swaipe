@@ -3,4 +3,6 @@ pynput
 Pillow
 opencv-python
 numpy
-pywinauto
+pywinauto; sys_platform == "win32"
+pycairo; sys_platform == "linux"
+PyGObject; sys_platform == "linux"

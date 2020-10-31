@@ -82,7 +82,10 @@ class Settings:
         self.automator_max_choice_limit_subtract_10 = settings["Keyboard Shotcuts"]["Automator -10 to max limit"]
 
         self.automator_yes_rate_add_1_percent = settings["Keyboard Shotcuts"]["Automator +1% to yes percentage"]
-        self.automator_yes_rate_subtract_1_percent = settings["Keyboard Shotcuts"]["Automator -1% to yes percentage"]        
+        self.automator_yes_rate_subtract_1_percent = settings["Keyboard Shotcuts"]["Automator -1% to yes percentage"]
+
+        self.toggle_hide_show_window = settings["Keyboard Shotcuts"]["Toggle hide/show window"]
+
 
 class Session:
     def __init__(self, gui=None, provider=None, automators=[None]):
