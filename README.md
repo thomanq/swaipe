@@ -40,6 +40,7 @@ The default ones are:
 | `shift+-` | Automator: -10 to max limit |
 | `alt++` | Automator: +1% to yes percentage |
 | `alt+-` | Automator: -1% to yes percentage |
+| `h` | Toggle hide/show window |
 
 # Supported dating platforms
 

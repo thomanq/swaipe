@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pynput = "*"
+opencv-python = "*"
+numpy = "*"
+pywinauto = {version = "*", sys_platform = "== 'win32'"}
+pycairo = {version = "*", sys_platform = "== 'linux'"}
+PyAutoGUI = "*"
+Pillow = "*"
+PyGObject = {version = "*", sys_platform = "== 'linux'"}
+
+[dev-packages]
+mypy = "*"
+pylint = "*"
+
+[requires]
+python_version = "3.9"
